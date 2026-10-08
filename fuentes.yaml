@@ -1,0 +1,65 @@
+# ============================================================
+#  Fuentes que Navi revisa 🧚
+#  Cada fuente es un "feed" RSS: una versión de la página
+#  pensada para que los programas la lean (lista de publicaciones
+#  con título, enlace, resumen y fecha).
+#  - Puedes agregar fuentes nuevas copiando el formato.
+#  - Para desactivar una sin borrarla, ponle # al inicio de sus líneas.
+# ============================================================
+
+# Solo se toman publicaciones más nuevas que esto (en horas).
+max_horas: 48
+
+fuentes:
+  # ---------- Videojuegos ----------
+  - nombre: Nintendo Life
+    categoria: videojuegos
+    url: https://www.nintendolife.com/feeds/latest
+
+  - nombre: Gematsu
+    categoria: videojuegos
+    url: https://www.gematsu.com/feed
+
+  - nombre: IGN
+    categoria: videojuegos
+    url: https://feeds.feedburner.com/ign/all
+
+  - nombre: PC Gamer
+    categoria: videojuegos
+    url: https://www.pcgamer.com/rss/
+
+  # ---------- Música ----------
+  - nombre: Loudwire
+    categoria: musica
+    url: https://loudwire.com/feed/
+
+  - nombre: Consequence
+    categoria: musica
+    url: https://consequence.net/feed/
+
+  - nombre: Pitchfork News
+    categoria: musica
+    url: https://pitchfork.com/feed/feed-news/rss
+
+  # ---------- Guitarra ----------
+  - nombre: Guitar World
+    categoria: guitarra
+    url: https://www.guitarworld.com/feeds/all
+
+  # ---------- Ofertas en México ----------
+  - nombre: Promodescuentos
+    categoria: ofertas
+    url: https://www.promodescuentos.com/rss/hot
+
+  # ---------- Reddit (todas las comunidades en UNA sola petición) ----------
+  # Para agregar una comunidad, ponla en la URL separada con "+".
+  # "?limit=100" pide hasta 100 publicaciones (por defecto Reddit da solo 25).
+  #   GameDeals       -> ofertas de videojuegos
+  #   VinylReleases   -> lanzamientos de vinilos
+  #   fpv             -> drones FPV
+  #   rcheli          -> helicópteros RC
+  #   radiocontrol    -> radiocontrol en general (aviones, etc.)
+  #   AnimeFigures    -> figuras coleccionables
+  - nombre: Reddit
+    categoria: comunidades
+    url: https://www.reddit.com/r/GameDeals+VinylReleases+fpv+rcheli+radiocontrol+AnimeFigures/new/.rss?limit=100

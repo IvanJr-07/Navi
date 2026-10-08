@@ -1,0 +1,23 @@
+# ============================================================
+#  Archivos que Git NUNCA debe subir a GitHub
+# ============================================================
+
+# Secretos: tokens y claves (¡lo más importante!)
+.env
+
+# Tu perfil de gustos: en la nube va como secreto INTERESES
+intereses.yaml
+
+# Entorno virtual: miles de archivos que cada quien recrea con
+# "pip install -r requirements.txt"
+venv/
+
+# Archivos temporales que Python genera solo
+__pycache__/
+*.pyc
+
+# Memoria local de Navi (en la nube se guarda aparte, en la caché de GitHub)
+navi.db
+
+# Notas personales
+comandos.txt

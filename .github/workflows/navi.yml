@@ -1,0 +1,74 @@
+# ============================================================
+#  Workflow de GitHub Actions: Navi se ejecuta sola en la nube 🧚
+#
+#  GitHub no garantiza la puntualidad de los horarios: en horas de
+#  mucha carga retrasa o descarta ejecuciones. Por eso se le pide
+#  cada 10 minutos, y guardia.py decide si a Navi le toca trabajar
+#  (más o menos una vez por hora) o si esta vez se salta.
+# ============================================================
+name: Navi
+
+on:
+  schedule:
+    # Formato cron (en hora UTC): minuto hora día mes día-semana.
+    # "4-59/10" = en los minutos 4, 14, 24, 34, 44 y 54 de cada hora.
+    # Se evita el minuto 0, cuando GitHub está más saturado.
+    - cron: "4-59/10 * * * *"
+  workflow_dispatch:   # Botón "Run workflow" para correrla a mano (siempre corre)
+
+# Nunca correr dos Navis al mismo tiempo (podrían repetir avisos)
+concurrency:
+  group: navi
+  cancel-in-progress: false
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      # Cada ejecución empieza en una máquina nueva, así que la memoria
+      # (navi.db) se recupera de la caché de GitHub...
+      - name: Recuperar la memoria de Navi
+        uses: actions/cache/restore@v6
+        with:
+          path: navi.db
+          key: navi-db-${{ github.run_id }}
+          restore-keys: navi-db-
+
+      - name: ¿Le toca a Navi?
+        id: guardia
+        run: python3 guardia.py
+
+      - name: Instalar Python
+        if: steps.guardia.outputs.saltar != 'true'
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip   # Guarda las librerías para que la siguiente vez sea más rápido
+
+      - name: Instalar librerías
+        if: steps.guardia.outputs.saltar != 'true'
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar Navi
+        if: steps.guardia.outputs.saltar != 'true'
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          INTERESES: ${{ secrets.INTERESES }}
+          GEMINI_MODELO: ${{ vars.GEMINI_MODELO }}
+          IA_PROVEEDOR: gemini
+        run: python navi.py
+
+      # ...y al terminar se guarda la versión actualizada, aunque Navi haya fallado.
+      - name: Guardar la memoria de Navi
+        if: always() && steps.guardia.outputs.saltar != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: navi.db
+          key: navi-db-${{ github.run_id }}
