@@ -76,6 +76,13 @@ def cargar_intereses() -> str:
     """
     texto = os.getenv("INTERESES")
     if not texto:
+        if not os.path.exists(ARCHIVO_INTERESES):
+            # Mensaje claro en lugar de un FileNotFoundError confuso
+            raise SystemExit(
+                "❌ No encontré tu perfil de gustos. En GitHub, revisa que exista el secreto "
+                "INTERESES (Settings → Secrets and variables → Actions); en tu PC, el archivo "
+                f"{ARCHIVO_INTERESES}."
+            )
         with open(ARCHIVO_INTERESES, encoding="utf-8") as archivo:
             texto = archivo.read()
     lineas = [l for l in texto.splitlines() if not l.strip().startswith("#")]
